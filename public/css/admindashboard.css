@@ -1,0 +1,147 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+  background-color: #f1f3f6;
+  font-size: 14px; 
+}
+
+.topbar {
+  background-color: #2874f0;
+  color: white;
+  padding: 10px 20px; 
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  height: 100px;
+}
+
+.topbar h2 {
+  margin: 0;
+  font-size: x-large; 
+}
+h3
+{
+  text-decoration: underline;
+  text-align: center;
+  font-size: large;
+  color:darkcyan;
+}
+.topbar button {
+  background-color: white;
+  color: #2874f0;
+  border: none;
+  padding: 6px 14px; 
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: large;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.topbar button:hover {
+  background-color: #e0e0e0;
+}
+
+.dashboard-wrapper {
+  max-width: 1000px;
+  margin: auto;
+  padding: 20px 15px;
+}
+
+.dashboard-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+  gap: 15px;
+}
+
+.section-box {
+  background: white;
+  border-radius: 6px;
+  padding: 15px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  height: 240px;
+}
+
+.section-box h3 {
+  margin-top: 0;
+  font-size: 1rem;
+  margin-bottom: 10px;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  overflow-y: auto;
+  max-height: 160px;
+}
+
+ul li {
+  border-bottom: 1px solid #eee;
+  padding: 6px 0;
+  font-size: 0.9rem;
+  color: #333;
+}
+
+#msgText,
+.input-box,
+textarea {
+  resize: vertical;
+  padding: 6px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  margin-bottom: 8px;
+  font-family: inherit;
+}
+
+#msgRole,
+.select-box {
+  padding: 6px;
+  font-size: 0.9rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  margin-bottom: 10px;
+}
+
+.section-box button {
+  align-self: flex-start;
+  background-color: darkcyan;
+  color: white;
+  border: none;
+  padding: 6px 14px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.section-box button:hover {
+  background-color: cyan;
+}
+
+@media (max-width: 600px) {
+  .topbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .topbar button {
+    width: 100%;
+  }
+
+  .dashboard-container {
+    grid-template-columns: 1fr;
+  }
+}

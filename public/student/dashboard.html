@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Student Dashboard - InstituteHub</title>
+  <link rel="stylesheet" href="../css/admindashboard.css">
+</head>
+<body>
+  <div class="topbar">
+    <h2>Welcome, STUDENT <span id="student-name"></span></h2>
+    <button onclick="logout()">Logout</button>
+  </div>
+  <div class="dashboard-wrapper">
+    <div class="dashboard-container">
+      <div class="section-box">
+        <h3>Announcements</h3>
+        <ul id="messages"><li>Loading...</li></ul>
+      </div>
+
+      <div class="section-box">
+        <h3>Send Message</h3>
+        <textarea id="msgText" placeholder="Write your message..."></textarea>
+        <select id="msgRole">
+          <option value="faculty">To Faculty</option>
+          <option value="admin">To Admin</option>
+        </select>
+        <button onclick="sendMessage()">Send</button>
+      </div>
+
+      <div class="section-box">
+        <h3>Events</h3>
+        <ul id="events"><li>Loading...</li></ul>
+      </div>
+
+      <div class="section-box">
+        <h3>My Tasks</h3>
+        <ul id="tasks"><li>Loading...</li></ul>
+      </div>
+
+      <div class="section-box">
+        <h3>Calendar</h3>
+        <ul id="scheduleList"><li>Loading...</li></ul>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const api = 'http://localhost:5000/api';
+    const token = localStorage.getItem("token");
+    const name = localStorage.getItem("name");
+    const userId = localStorage.getItem("userId");
+
+    if (!token) location.href = "/index.html";
+    document.getElementById("student-name").innerText = name;
+
+    function logout() {
+      localStorage.clear();
+      location.href = "/index.html";
+    }
+
+    function sendMessage() {
+      const content = document.getElementById("msgText").value.trim();
+      const recipientRole = document.getElementById("msgRole").value;
+
+      if (!content || !recipientRole) {
+        return alert("Please write a message and select a role.");
+      }
+
+      fetch(`${api}/messages`, {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ content, recipientRole })
+      })
+      .then(res => res.json())
+      .then(() => {
+        alert(" Message sent!");
+        document.getElementById("msgText").value = '';
+        loadMessages();
+      })
+      .catch(err => console.error("Error sending message:", err));
+    }
+
+    function loadMessages() {
+  fetch(`${api}/messages/student`, {
+    headers: { 'Authorization': `Bearer ${token}` }
+  })
+  .then(res => res.json())
+  .then(data => {
+    const allowed = ['admin', 'faculty'];
+    const filtered = data.filter(m => allowed.includes(m.senderRole));
+
+    document.getElementById("messages").innerHTML = filtered.length
+      ? filtered.map(m => `<li><strong>${m.senderId}</strong>: ${m.content}</li>`).join('')
+      : `<li>No messages</li>`;
+  })
+  .catch(err => console.error("Error loading messages:", err));
+}
+
+
+    function loadEvents() {
+      fetch(`${api}/events`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      })
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById("events").innerHTML = Array.isArray(data) && data.length
+          ? data.map(e => `<li><strong>${e.title}</strong> - ${e.description} (${new Date(e.date).toLocaleDateString()})</li>`).join('')
+          : `<li>No events</li>`;
+      })
+      .catch(err => console.error("Error loading events:", err));
+    }
+
+    function loadTasks() {
+  const userId = localStorage.getItem("userId");
+
+  fetch(`${api}/tasks`, {
+    headers: { 'Authorization': `Bearer ${token}` }
+  })
+  .then(res => res.json())
+  .then(data => {
+    const myTasks = data.filter(t => t.assignedTo === userId);
+
+    document.getElementById("tasks").innerHTML = myTasks.length
+      ? myTasks.map(t => `
+          <li>
+            <strong>${t.title}</strong> - ${t.description}<br>
+            Due: ${new Date(t.dueDate).toLocaleDateString()}<br>
+            Status: <em>${t.status}</em>
+          </li>
+        `).join('')
+      : `<li>No tasks assigned</li>`;
+  })
+  .catch(err => console.error("Error loading tasks:", err));
+}
+
+
+    function loadSchedule() {
+      fetch(`${api}/calendar`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      })
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById("scheduleList").innerHTML = Array.isArray(data) && data.length
+          ? data.map(s => `<li><strong>${s.title}</strong> (${s.type}) - ${new Date(s.date).toLocaleDateString()}</li>`).join('')
+          : `<li>No schedule found</li>`;
+      })
+      .catch(err => console.error("Error loading schedule:", err));
+    }
+
+    loadMessages();
+    loadEvents();
+    loadTasks();
+    loadSchedule();
+  </script>
+</body>
+</html>
