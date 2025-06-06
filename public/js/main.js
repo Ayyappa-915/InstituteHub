@@ -1,4 +1,4 @@
-const api = 'http://localhost:5000/api';
+const api = 'https://institutehub.onrender.com/api';
 
 function register() {
     const name = document.getElementById("name").value;
